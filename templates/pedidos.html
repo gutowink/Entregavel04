@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pedidos.css') }}"/>
+</head>
+<body>
+    {% if not logged_in %}
+    <h1>Você não está logado</h1>
+    {% endif %}
+
+    <ul class="pedido-lista">
+        {% for pedido in pedidos %}
+        <li class="pedido-item">
+            <p><strong>Valor:</strong> {{ pedido.preco }}
+                <strong>Nome:</strong> {{ pedido.nome }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('index') }}" class="link-index">Index</a>
+</body>
+</html>

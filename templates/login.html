@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"/>
+</head>
+<div class="container">
+    {% if houve_falha %}
+    <h2>Falha ao fazer o login</h2>
+    {% endif %}
+
+    <div class="login-container">
+        <form method="post">
+            Email:
+            <input name="email" id="email"/>
+            <br/>
+            Senha:
+            <input type="password" name="password" id="password"/>
+
+            <input type="submit">
+        </form>
+    </div>
+</div>

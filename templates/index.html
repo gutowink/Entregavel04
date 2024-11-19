@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+</head>
+<body>
+    {% if session.get('email') %}
+        <div class="login-container">
+            <h2>Logged in as {{ session['email'] }}</h2>
+                <a href="{{ url_for('pedidos') }}">
+                    <button class="login-button"> Pedidos </button>
+                </a>
+                <a href="{{ url_for('logout') }}">
+                    <button class="login-button"> Logout </button>
+                </a>
+        </div>
+    {% else %}
+        <div class="login-container">
+            <h2>You are not logged in.</h2>
+            <a href="{{ url_for('login') }}">
+                <button class="login-button"> Login </button>
+            </a>
+        </div>
+    {% endif %}
+</body>
+</html>
