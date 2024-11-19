@@ -11,6 +11,7 @@ class Singleton:
             cls._instance.current_restaurant_flask = None
             cls._instance.all_products = None
             cls._instance.current_admin = None
+            cls._instance.user_name = None
         return cls._instance
 
     def set_comissao(self, comissao):
@@ -66,3 +67,9 @@ class Singleton:
 
     def get_current_admin(self):
         return self.current_admin
+
+    def set_user_name(self, user_name):
+        self.user_name = user_name
+
+    def get_user_name(self):
+        return self.user_name

@@ -12,7 +12,7 @@ class Client:
         self.app = app
         self.current_user = None
 
-    def show_user_signup(self):  # quase o mesmo método de cadastro do restaurante
+    def show_user_signup(self):  # quase o mesmo métodoo de cadastro do restaurante
         Utils.clear_screen()
         print('> Criar Conta <\n')
         while True:
@@ -51,7 +51,7 @@ class Client:
         time.sleep(2)
         self.app.start_app()
 
-    def show_user_login(self):  # mesmo método de login do restaurante
+    def show_user_login(self):  # mesmo métodoo de login do restaurante
         Utils.clear_screen()
         print('> Login <\n')
         while True:
@@ -263,6 +263,7 @@ class Client:
             total_venda += float(produto.total)
         print(f'\nValor total da venda: R${total_venda:.2f}')
 
+        self.db.insert_pedido(produtos_no_carrinho)
         self.db.clear_cart(user.pk)  # limpa o carrinho após realizar a venda
 
         # Listar compras anteriores do cliente

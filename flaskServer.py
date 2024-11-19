@@ -31,7 +31,7 @@ def login():
             admin = my_db.is_admin(email, password)
             if admin is not None:
                 Singleton().set_current_admin(admin)
-                products = my_db.get_all_products()
+                products = my_db.get_all_pedidos()
                 Singleton().set_all_products(products)
                 session['email'] = request.form['email']
                 return redirect(url_for('index'))
@@ -44,10 +44,10 @@ def pedidos():
     restaurante = Singleton().get_current_restaurant_flask()
     admin = Singleton().get_current_admin()
     if restaurante:
-        products = my_db.get_produtos(restaurante.pk)
+        products = my_db.get_pedidos(restaurante.pk)
         return render_template('pedidos.html', pedidos=products, is_admin=False, logged_in=True)
     elif admin:
-        products = my_db.get_all_products()
+        products = my_db.get_all_pedidos()
         return render_template('pedidos.html', pedidos=products, is_admin=True, logged_in=True)
     else:
         return render_template('pedidos.html', pedidos=[], is_admin=False, logged_in=False)
@@ -59,3 +59,11 @@ def logout():
     Singleton().set_current_restaurant_flask(None)
     Singleton().set_current_admin(None)
     return redirect(url_for('index'))
+
+@flask_app.route('/relatorios/admin')
+def relatorios_admin():
+    return render_template('relatorios_admin.html')
+
+@flask_app.route('/relatorios/restaurante')
+def relatorios_restaurante():
+    return render_template('relatorios_restaurante.html')

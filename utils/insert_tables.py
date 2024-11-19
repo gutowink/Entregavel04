@@ -69,4 +69,31 @@ class Inserts:
             VALUES (?, ?, ?, ?)
         ''', usuarios)
 
+        # 5 pedidos com 3 produtos cada para testes no flask
+        pedidos = [
+            ('Usuario E', 1, 1, 2, 25.50, 51.00, 1, 'criado'),
+            ('Usuario E', 1, 2, 1, 15.75, 15.75, 1, 'criado'),
+            ('Usuario E', 1, 12, 3, 19.80, 59.40, 1, 'criado'),
+
+            ('Usuario A', 2, 3, 1, 35.10, 35.10, 2, 'criado'),
+            ('Usuario A', 2, 8, 2, 22.00, 44.00, 2, 'criado'),
+            ('Usuario A', 2, 13, 4, 27.50, 110.00, 2, 'criado'),
+
+            ('Usuario B', 3, 4, 2, 45.20, 90.40, 3, 'criado'),
+            ('Usuario B', 3, 9, 1, 40.75, 40.75, 3, 'criado'),
+            ('Usuario B', 3, 19, 3, 47.60, 142.80, 3, 'criado'),
+
+            ('Usuario C', 4, 5, 1, 55.30, 55.30, 4, 'criado'),
+            ('Usuario C', 4, 10, 2, 33.90, 67.80, 4, 'criado'),
+            ('Usuario C', 4, 15, 4, 44.00, 176.00, 4, 'criado'),
+
+            ('Usuario D', 5, 6, 3, 30.10, 90.30, 5, 'criado'),
+            ('Usuario D', 5, 11, 1, 29.99, 29.99, 5, 'criado'),
+            ('Usuario D', 5, 20, 2, 25.25, 50.50, 5, 'criado')
+        ]
+        cur.executemany('''
+        INSERT INTO pedido (usuario, id_restaurante, id_produto, quantidade, preco, total, id_pedido, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', pedidos)
+
         conn.commit()

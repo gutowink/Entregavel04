@@ -7,18 +7,74 @@
 </head>
 <body>
     {% if not logged_in %}
-    <h1>Você não está logado</h1>
+    <div class="container">
+        <h1>Você não está logado</h1>
+        <a href="{{ url_for('index') }}" class="link-index">
+            <button class="index-button"> Menu </button>
+        </a>
+    </div>
+
+    {% elif is_admin %}
+    <div class="appbar">
+        <div class="appbar-title">
+            <p>Menu de Administrador</p>
+        </div>
+        <a href="{{ url_for('relatorios_admin') }}" class="link-relatorios_admin">
+            <button class="relatorios-button">Relatórios</button>
+        </a>
+    </div>
+
+    <div class="container">
+        <ul class="pedido-lista">
+            {% for pedido in pedidos %}
+            <li class="pedido-item">
+                <p>
+                    <strong>Pedido ID:</strong> {{ pedido.id_pedido }}
+                    <strong>Cliente:</strong> {{ pedido.usuario }}
+                    <strong>Total: R$</strong>{{ pedido.total }}
+                </p>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('index') }}" class="link-index">
+            <button class="index-button"> Menu </button>
+        </a>
+    </div>
+
+    {% else %}
+        <div class="appbar">
+            <div class="appbar-title">
+                <p>Menu do Restaurante</p>
+            </div>
+            <a href="{{ url_for('relatorios_restaurante') }}" class="link-relatorios_restaurante">
+                <button class="relatorios-button">Relatórios</button>
+            </a>
+        </div>
+
+        <div class="container">
+            <ul class="pedido-lista">
+                {% for pedido in pedidos %}
+                <li class="pedido-item">
+                    <div class="pedido-actions">
+                        <p>
+                            <strong>Pedido ID:</strong> {{ pedido.id_pedido }}
+                            <strong>Cliente:</strong> {{ pedido.usuario }}
+                            <strong>Total: R$</strong>{{ pedido.total }}
+                        </p>
+                        <div>
+                            <button class="accept-button">Aceitar</button>
+                            <button class="reject-button">Recusar</button>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <a href="{{ url_for('index') }}" class="link-index">
+                <button class="index-button"> Menu </button>
+            </a>
+     </div>
     {% endif %}
-
-    <ul class="pedido-lista">
-        {% for pedido in pedidos %}
-        <li class="pedido-item">
-            <p><strong>Valor:</strong> {{ pedido.preco }}
-                <strong>Nome:</strong> {{ pedido.nome }}</p>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <a href="{{ url_for('index') }}" class="link-index">Index</a>
 </body>
 </html>

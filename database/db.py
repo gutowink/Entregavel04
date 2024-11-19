@@ -5,6 +5,7 @@ from models.produto import Produto
 from models.user import User
 from models.carrinho import Carrinho
 from models.venda import Venda
+from models.pedido import Pedido
 
 from datetime import datetime, timedelta, timezone
 
@@ -61,6 +62,23 @@ class DB:
                         preco INTEGER NOT NULL,
                         total FLOAT NOT NULL,
                         FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+                        FOREIGN KEY (id_restaurante) REFERENCES restaurante(id),
+                        FOREIGN KEY (id_produto) REFERENCES produto(id)
+                    )
+                    ''')
+
+        cur.execute('''
+                    CREATE TABLE IF NOT EXISTS pedido (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        usuario TEXT NOT NULL,
+                        id_restaurante INTEGER NOT NULL,
+                        id_produto INTEGER NOT NULL,
+                        quantidade INTEGER NOT NULL,
+                        preco INTEGER NOT NULL,
+                        total FLOAT NOT NULL,
+                        id_pedido INTEGER NOT NULL UNIQUE,
+                        status TEXT DEFAULT 'criado',
+                        FOREIGN KEY (usuario) REFERENCES usuario(nome),
                         FOREIGN KEY (id_restaurante) REFERENCES restaurante(id),
                         FOREIGN KEY (id_produto) REFERENCES produto(id)
                     )
@@ -425,6 +443,23 @@ class DB:
 
         self.connection.commit()
 
+    def get_pedidos(self, id_restaurante):
+        cur = self.connection.cursor()
+        cur.execute('''
+                SELECT id, usuario, id_produto, quantidade, preco, total, id_pedido, status
+                FROM pedido WHERE id_restaurante = ?
+                ''', (id_restaurante,))
+
+        record = cur.fetchall()
+
+        pedidos = []
+        for item in record:
+            pedido = Pedido(pk=item[0], usuario=item[1], id_produto=item[2], quantidade=item[3], preco=item[4],
+                            total=item[5], id_pedido=item[6], status=item[7], id_restaurante=id_restaurante)
+            pedidos.append(pedido)
+
+        return pedidos
+
     def get_comissao(self):
         cur = self.connection.cursor()
         cur.execute('''
@@ -518,3 +553,40 @@ class DB:
 
         return produtos if produtos else None
 
+    def get_all_pedidos(self):
+        cur = self.connection.cursor()
+        cur.execute('''SELECT id, usuario, id_restaurante, id_produto, quantidade, preco, total, id_pedido, status
+                     FROM pedido''')
+        records = cur.fetchall()
+
+        pedidos = []
+        for item in records:
+            pedido = Pedido(pk=item[0], usuario=item[1], id_produto=item[2], quantidade=item[3], preco=item[4],
+                            total=item[5], id_pedido=item[6], status=item[7], id_restaurante=item[8])
+            pedidos.append(pedido)
+
+        return pedidos if pedidos else None
+
+    def get_user_name(self, id_usuario: int):
+        cur = self.connection.cursor()
+        cur.execute('''SELECT nome FROM usuario WHERE id = ?
+                        ''', (id_usuario,))
+        record = cur.fetchone()
+        return record[0] if record else None
+
+    def insert_pedido(self, produtos_no_carrinho):
+        cur = self.connection.cursor()
+        id_pedido = int(datetime.now().timestamp())  # Identificador único para o pedido
+
+        for item in produtos_no_carrinho:
+            user_name = self.get_user_name(item.id_usuario)
+            cur.execute('''
+                INSERT INTO pedido (usuario, id_restaurante, id_produto, quantidade, preco, total, id_pedido)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                user_name, item.id_restaurante, item.id_produto, item.quantidade,
+                item.preco, item.total, id_pedido
+            ))
+
+        self.connection.commit()
+        cur.close()
