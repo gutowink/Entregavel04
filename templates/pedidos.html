@@ -7,36 +7,16 @@
 </head>
 <body>
     {% if not logged_in %}
-    <div class="container">
-        <h1>Você não está logado</h1>
+     <div class="login-container">
+        <h2 class="title">Você não está logado</h2>
         <a href="{{ url_for('index') }}" class="link-index">
             <button class="index-button"> Menu </button>
         </a>
-    </div>
+     </div>
 
     {% elif is_admin %}
-    <div class="appbar">
-        <div class="appbar-title">
-            <p>Menu de Administrador</p>
-        </div>
-        <a href="{{ url_for('relatorios_admin') }}" class="link-relatorios_admin">
-            <button class="relatorios-button">Relatórios</button>
-        </a>
-    </div>
-
-    <div class="container">
-        <ul class="pedido-lista">
-            {% for pedido in pedidos %}
-            <li class="pedido-item">
-                <p>
-                    <strong>Pedido ID:</strong> {{ pedido.id_pedido }}
-                    <strong>Cliente:</strong> {{ pedido.usuario }}
-                    <strong>Total: R$</strong>{{ pedido.total }}
-                </p>
-            </li>
-            {% endfor %}
-        </ul>
-
+    <div class="login-container">
+        <h2 class="title">Você não é um restaurante.</h2>
         <a href="{{ url_for('index') }}" class="link-index">
             <button class="index-button"> Menu </button>
         </a>

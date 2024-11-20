@@ -7,18 +7,30 @@
 </head>
 <body>
     {% if session.get('email') %}
-        <div class="login-container">
-            <h2>Logged in as {{ session['email'] }}</h2>
-                <a href="{{ url_for('pedidos') }}">
-                    <button class="login-button"> Pedidos </button>
-                </a>
-                <a href="{{ url_for('logout') }}">
-                    <button class="login-button"> Logout </button>
-                </a>
-        </div>
+        {% if is_admin %}
+            <div class="login-container">
+                <h2>Logado como {{ session['email'] }}</h2>
+                    <a href="{{ url_for('relatorios_admin') }}">
+                        <button class="login-button"> Relatórios </button>
+                    </a>
+                    <a href="{{ url_for('logout') }}">
+                        <button class="login-button"> Logout </button>
+                    </a>
+            </div>
+        {% else %}
+            <div class="login-container">
+                <h2>Logado como {{ session['email'] }}</h2>
+                    <a href="{{ url_for('pedidos') }}">
+                        <button class="login-button"> Pedidos </button>
+                    </a>
+                    <a href="{{ url_for('logout') }}">
+                        <button class="login-button"> Logout </button>
+                    </a>
+            </div>
+        {% endif %}
     {% else %}
         <div class="login-container">
-            <h2>You are not logged in.</h2>
+            <h2>Você não está logado.</h2>
             <a href="{{ url_for('login') }}">
                 <button class="login-button"> Login </button>
             </a>

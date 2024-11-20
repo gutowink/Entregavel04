@@ -4,7 +4,7 @@ body {
     background-color: darkgray;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Alinha o conteúdo no topo */
+    align-items: center; /* Alinha o conteúdo no topo */
     height: 100vh;
     margin: 0;
     overflow-y: auto; /* Habilita a barra de rolagem */
@@ -42,6 +42,24 @@ body {
     margin-top: 100px;
     padding: 1.5rem;
 }
+
+.login-container {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
 
 /* Contêiner da lista de pedidos */
 .pedido-lista {

@@ -106,7 +106,7 @@ class DB:
         if not usuario_existe:
             cur.execute('''
                         INSERT INTO usuario (nome, email, senha, login) VALUES (?, ?, ?, ?)
-            ''', ('Admin', 'admin@admin.com', 'admin123', datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+            ''', ('Admin', 'admin@admin.com', 'adminpwd123', datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
         self.connection.commit()  # Commit the transaction
 
@@ -555,7 +555,7 @@ class DB:
 
     def get_all_pedidos(self):
         cur = self.connection.cursor()
-        cur.execute('''SELECT id, usuario, id_restaurante, id_produto, quantidade, preco, total, id_pedido, status
+        cur.execute('''SELECT id, usuario, id_produto, quantidade, preco, total, id_pedido, status, id_restaurante
                      FROM pedido''')
         records = cur.fetchall()
 
