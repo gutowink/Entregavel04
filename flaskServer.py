@@ -43,7 +43,7 @@ def login():
     return render_template('login.html',
                            houve_falha=falha_login)
 @flask_app.route('/pedidos')
-def pedidos():
+def pedidos():  # todo mostrar 1 vez somente o pedido com os items, em vez de repetir várias vezes
     restaurante = Singleton().get_current_restaurant_flask()
     admin = Singleton().get_current_admin()
     if restaurante:

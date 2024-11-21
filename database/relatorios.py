@@ -2,6 +2,7 @@ import sqlite3
 from database.db import DB
 
 # todo retornar resultados para flask em... ?graficos?
+# todo 99/133/151/158
 
 class Relatorios:
     def __init__(self, db):
