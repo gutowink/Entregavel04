@@ -50,8 +50,7 @@ def pedidos():
         products = my_db.get_pedidos(restaurante.pk)
         return render_template('pedidos.html', pedidos=products, is_admin=False, logged_in=True)
     elif admin:
-        products = my_db.get_all_pedidos()
-        return render_template('pedidos.html', pedidos=products, is_admin=True, logged_in=True)
+        return render_template('pedidos.html', pedidos=[], is_admin=True, logged_in=True)
     else:
         return render_template('pedidos.html', pedidos=[], is_admin=False, logged_in=False)
 

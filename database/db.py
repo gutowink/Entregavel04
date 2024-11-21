@@ -76,7 +76,7 @@ class DB:
                         quantidade INTEGER NOT NULL,
                         preco INTEGER NOT NULL,
                         total FLOAT NOT NULL,
-                        id_pedido INTEGER NOT NULL UNIQUE,
+                        id_pedido INTEGER NOT NULL,
                         status TEXT DEFAULT 'criado',
                         FOREIGN KEY (usuario) REFERENCES usuario(nome),
                         FOREIGN KEY (id_restaurante) REFERENCES restaurante(id),
@@ -94,7 +94,8 @@ class DB:
                         quantidade INTEGER NOT NULL,
                         valor INTEGER NOT NULL,
                         total FLOAT NOT NULL,
-                        data_hora DATETIME
+                        data_hora DATETIME,
+                        id_pedido INTEGER NOT NULL
                     )
                     ''')
 
@@ -163,13 +164,14 @@ class DB:
         local_timezone = timezone(timedelta(hours=-3))  # ajusta ao fuso horário
         local_time = datetime.now(local_timezone)
         data_hora_formatada = local_time.strftime('%Y-%m-%d %H:%M:%S')
+        id_pedido = int(datetime.now().timestamp())
 
         cur = self.connection.cursor()
         cur.execute('''
-            INSERT INTO venda (id_carrinho, id_restaurante, id_usuario, nome, quantidade, valor, total, data_hora)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO venda (id_carrinho, id_restaurante, id_usuario, nome, quantidade, valor, total, data_hora, id_pedido)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (venda.id_carrinho, venda.id_restaurante, venda.id_usuario, venda.nome, venda.quantidade,
-                          venda.valor, venda.total, data_hora_formatada))
+                          venda.valor, venda.total, data_hora_formatada, id_pedido))
 
         self.connection.commit()
 
