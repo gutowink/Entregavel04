@@ -592,3 +592,112 @@ class DB:
 
         self.connection.commit()
         cur.close()
+
+    def get_pedido_id(self, id_restaurante: int):
+        cur = self.connection.cursor()
+        cur.execute('''
+                        SELECT DISTINCT p.id_pedido
+                        FROM pedido p
+                        WHERE p.status NOT IN ('recusado', 'entregue') AND id_restaurante = ?
+                        ''', (id_restaurante,))
+
+        records = cur.fetchall()
+        return records
+
+    def get_product_name(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    SELECT pd.nome, p.quantidade, p.id_pedido
+                    FROM pedido p
+                    LEFT JOIN produto pd ON p.id_produto = pd.id
+                    WHERE p.id_pedido = ?
+        ''', (id_pedido,))
+
+        records = cur.fetchall()
+        return records
+
+    def get_pedido_total(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    SELECT ROUND(SUM(p.total), 0)
+                    FROM pedido p
+                    WHERE id_pedido = ?
+                    GROUP BY p.id_pedido
+        ''', (id_pedido,))
+
+        record = cur.fetchone()
+        return record[0]
+
+    def update_status_pedido_aceito(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    UPDATE pedido
+                    SET status = 'aceito'
+                    WHERE id_pedido = ?
+        ''', (id_pedido,))
+
+        self.connection.commit()
+        cur.close()
+
+    def update_status_pedido_recusado(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    UPDATE pedido
+                    SET status = 'recusado'
+                    WHERE id_pedido = ?
+                ''', (id_pedido,))
+
+        self.connection.commit()
+        cur.close()
+
+    def update_status_pedido_saiu_entrega(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    UPDATE pedido
+                    SET status = 'saiu para entrega'
+                    WHERE id_pedido = ?
+                ''', (id_pedido,))
+
+        self.connection.commit()
+        cur.close()
+
+    def update_status_pedido_entregue(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    UPDATE pedido
+                    SET status = 'entregue'
+                    WHERE id_pedido = ?
+                ''', (id_pedido,))
+
+        self.connection.commit()
+        cur.close()
+
+    def get_pedido_status_by_restaurante(self, id_restaurante: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    SELECT p.status
+                    FROM pedido p
+                    WHERE id_restaurante = ?
+        ''', (id_restaurante,))
+
+        records = cur.fetchall()
+        return records
+
+    def get_pedido_status_by_pedido(self, id_pedido: int):
+        cur = self.connection.cursor()
+
+        cur.execute('''
+                    SELECT DISTINCT p.status
+                    FROM pedido p
+                    WHERE id_pedido = ?
+        ''', (id_pedido,))
+
+        record = cur.fetchone()
+        return record[0] if record else None

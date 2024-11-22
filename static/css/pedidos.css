@@ -55,6 +55,12 @@ body {
     width: 400px;
 }
 
+.menu-container {
+    display: flex;
+    justify-content: center; /* Centraliza o botão horizontalmente */
+    margin-top: 20px; /* Espaço entre os pedidos e o botão */
+}
+
 .title {
     text-align: center;
     margin-bottom: 1rem;
@@ -92,6 +98,19 @@ body {
     display: flex;
     gap: 10px;
     justify-content: space-between;
+}
+
+ul {
+    list-style: none;
+    padding-left: 15px;
+    margin: 0;
+}
+
+ul li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 5px 0;
 }
 
 .accept-button, .reject-button {

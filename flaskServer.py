@@ -43,20 +43,47 @@ def login():
     return render_template('login.html',
                            houve_falha=falha_login)
 @flask_app.route('/pedidos')
-def pedidos():  # todo mostrar 1 vez somente o pedido com os items, em vez de repetir várias vezes
+def pedidos():
     restaurante = Singleton().get_current_restaurant_flask()
     admin = Singleton().get_current_admin()
     if restaurante:
-        products = my_db.get_pedidos(restaurante.pk)
-        return render_template('pedidos.html', pedidos=products, is_admin=False, logged_in=True)
+        p_pedidos = my_db.get_pedido_id(restaurante.pk)
+        pedidos_info = []  # Lista para armazenar informações agrupadas de pedidos
+
+        for pedido_id in p_pedidos:
+            pedido_id = pedido_id[0]  # Extrai o ID do pedido
+            total = my_db.get_pedido_total(pedido_id)  # pega o total do pedido
+            status = my_db.get_pedido_status_by_pedido(pedido_id)
+            products = my_db.get_product_name(pedido_id)  # Obtém os produtos do pedido atual
+            products_info = []  # Lista para os produtos desse pedido
+
+            for product in products:
+                nome = product[0]
+                quantidade = product[1]
+                products_info.append({'nome': nome, 'quantidade': quantidade})
+
+            pedidos_info.append({'id_pedido': pedido_id,'total': total,'status': status,'product_info': products_info})
+
+        return render_template('pedidos.html', pedidos=pedidos_info, is_admin=False, logged_in=True)
     elif admin:
         return render_template('pedidos.html', pedidos=[], is_admin=True, logged_in=True)
     else:
         return render_template('pedidos.html', pedidos=[], is_admin=False, logged_in=False)
 
+@flask_app.route('/alterar_status/<int:pedido_id>/<novo_status>', methods=['POST'])
+def alterar_status(pedido_id, novo_status):
+    if novo_status == 'aceito':
+        my_db.update_status_pedido_aceito(pedido_id)
+    elif novo_status == 'saiu_para_entrega':
+        my_db.update_status_pedido_saiu_entrega(pedido_id)
+    elif novo_status == 'entregue':
+        my_db.update_status_pedido_entregue(pedido_id)
+    else:
+        my_db.update_status_pedido_recusado(pedido_id)
+    return redirect(url_for('pedidos'))
+
 @flask_app.route('/logout')
 def logout():
-    # remove the email from the session if it's there
     session.pop('email', None)
     Singleton().set_current_restaurant_flask(None)
     Singleton().set_current_admin(None)
