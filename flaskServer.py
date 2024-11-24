@@ -5,6 +5,10 @@ from flask import session
 from database.db import DB
 from utils.singleton import Singleton
 
+# todo comentar código (Não só neste arquivo)
+# todo tela de relatórios para restaurante e admin
+# todo modelagem conceitual e lógica do banco
+
 my_db = DB('GulaExpress.db')
 
 flask_app = Flask(__name__)
@@ -117,8 +121,3 @@ def relatorios_restaurante():
 #          return render_template('relatorios_restaurante.html', is_restaurant=False, is_admin=False)
 
 # todo tela de relatórios para restaurante e admin
-
-# todo botões interativos pedidos restaurante
-    #  Em 'criado’s coloque as opções ‘aceitar’ e ‘rejeitar’
-    # - Em ‘aceito’s coloque a opção ‘saiu para entrega’
-    # - Em ‘saiu para entrega’ coloque a opção ‘entregue’
