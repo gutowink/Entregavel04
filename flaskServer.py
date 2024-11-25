@@ -93,7 +93,7 @@ def logout():
     session.pop('email', None)
     Singleton().set_current_restaurant_flask(None)
     Singleton().set_current_admin(None)
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @flask_app.route('/relatorios/admin')
 def relatorios_admin():
@@ -103,7 +103,8 @@ def relatorios_admin():
         js_resources = INLINE.render_js()
         css_resources = INLINE.render_css()
 
-        qntd_restaurante_cliente = my_db.qntd_restaurante_cliente() # não precisa de gráfico
+        qntd_restaurante_cliente = my_db.qntd_restaurante_cliente()
+        graph5 = bk.admin_graph5(qntd_restaurante_cliente)
 
         clientes_unicos = my_db.clientes_unicos_cada_restaurante()
         graph1 = bk.admin_graph1(clientes_unicos)
@@ -122,7 +123,8 @@ def relatorios_admin():
             'graph1': graph1,
             'graph2': graph2,
             'graph3': graph3,
-            'graph4': graph4
+            'graph4': graph4,
+            'graph5': graph5
         }
 
         return render_template('relatorios_admin.html', is_admin=True,

@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: darkgray;
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,7 +63,7 @@ a:hover {
     height: 3rem;
     padding: 0.8rem;
     margin: 0.5rem;
-    background-color: #4CAF50;
+    background-color: #8A817C;
     color: white;
     border: none;
     border-radius: 4px;
@@ -72,5 +72,5 @@ a:hover {
 }
 
 .index-button:hover {
-    background-color: #45a049;
+    background-color: #BCB8B1;
 }

@@ -17,37 +17,64 @@
                 <button class="index-button"> Menu </button>
             </a>
         </div>
+
     {% elif is_restaurant %}
-        <div class="graph-container">
-            {% block bokeh %}
-                {{ js_resources|indent(4)|safe }}
-                {{ css_resources|indent(4)|safe }}
-            {% endblock %}
+        <div class="container">
+            <div class="container">
+                <h2>Qual a maior compra (em valor) feita no restaurante?</h2>
+                <p>
+                    Cliente: {{ maior_compra[0] }} - R$ {{ maior_compra[1] }}
+                </p>
+                <h2>Qual o maior pedido (em quantidade de itens) feita no restaurante?</h2>
+                <p>
+                    Pedido: {{ maior_pedido[0] }} - {{ maior_pedido[1] }} Itens
+                </p>
+                <h2>Liste a maior e a menor comissão paga pelo restaurante</h2>
+                <p>
+                    Maior comissão: R$ {{ maior_e_menor_comissao[0] }} <br>
+                    Menor comissão: R$ {{ maior_e_menor_comissao[1] }}
+                </p>
+                <h2>Qual o item mais pedido?</h2>
+                <p>
+                    Item: {{ item_mais_pedido[0] }}
+                </p>
 
-            {% block content %}
-                <!-- Gráfico 1 -->
-                <div>
-                    <h2>Gráfico 1: Média Gasta por Usuário</h2>
-                    {{ graph1.plot_script|safe }}
-                    {{ graph1.plot_div|safe }}
-                </div>
-                <!-- Gráfico 2 -->
-                <div>
-                    <h2>Gráfico 2: Pedidos por Status</h2>
-                    {{ graph2.plot_script|safe }}
-                    {{ graph2.plot_div|safe }}
-                </div>
-                <!-- Gráfico 3 -->
-                <div>
-                    <h2>Gráfico 3: Pedidos por dia da semana</h2>
-                    {{ graph3.plot_script|safe }}
-                    {{ graph3.plot_div|safe }}
-                </div>
-            {% endblock %}
+            </div>
 
-            <a href="{{ url_for('pedidos') }}" class="link-pedidos">
-                <button class="index-button"> Pedidos </button>
-            </a>
+
+            <div class="graph-container">
+                {% block bokeh %}
+                    {{ js_resources|indent(4)|safe }}
+                    {{ css_resources|indent(4)|safe }}
+                {% endblock %}
+
+                {% block content %}
+                    <!-- Gráfico 1 -->
+                    <div>
+                        <h2>Média de gasto de cada pessoa</h2>
+                        {{ graph1.plot_script|safe }}
+                        {{ graph1.plot_div|safe }}
+                    </div>
+                    <!-- Gráfico 2 -->
+                    <div>
+                        <h2>Quantos pedidos em cada status?</h2>
+                        {{ graph2.plot_script|safe }}
+                        {{ graph2.plot_div|safe }}
+                    </div>
+                    <!-- Gráfico 3 -->
+                    <div>
+                        <h2>Quantidade média de pedidos por cada dia da semana</h2>
+                        {{ graph3.plot_script|safe }}
+                        {{ graph3.plot_div|safe }}
+                    </div>
+                {% endblock %}
+
+            </div>
+            <div class="container">
+                <a href="{{ url_for('pedidos') }}" class="link-pedidos">
+                    <button class="index-button"> Pedidos </button>
+                </a>
+            </div>
         </div>
     {% endif %}
 </body>

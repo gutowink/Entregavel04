@@ -2,6 +2,7 @@ from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.models import LabelSet, ColumnDataSource
 from bokeh.resources import INLINE
+from bokeh.transform import dodge
 
 
 def to_column_source(df):
@@ -30,9 +31,9 @@ class Bokeh:
         )
 
         fig.vbar(x='Nome', top='MediaGasta', width=0.5, source=data_source, color="tomato")
-        labels1 = LabelSet(x='Nome', y='MediaGasta', text='MediaGasta', level='glyph', text_align='center', y_offset=5,
+        labels = LabelSet(x='Nome', y='MediaGasta', text='MediaGasta', level='glyph', text_align='center', y_offset=5,
                            source=data_source)
-        fig.add_layout(labels1)
+        fig.add_layout(labels)
 
         return self.render_graph(fig)
 
@@ -138,40 +139,50 @@ class Bokeh:
         return self.render_graph(fig)
 
     def admin_graph3(self, pedidos_restaurante):
-        meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-                 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        # Preparar os dados
+        restaurantes = pedidos_restaurante['NomeRestaurante']
+        meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
-        totais = [
-            pedidos_restaurante['Janeiro'][0],
-            pedidos_restaurante['Fevereiro'][0],
-            pedidos_restaurante['Março'][0],
-            pedidos_restaurante['Abril'][0],
-            pedidos_restaurante['Maio'][0],
-            pedidos_restaurante['Junho'][0],
-            pedidos_restaurante['Julho'][0],
-            pedidos_restaurante['Agosto'][0],
-            pedidos_restaurante['Setembro'][0],
-            pedidos_restaurante['Outubro'][0],
-            pedidos_restaurante['Novembro'][0],
-            pedidos_restaurante['Dezembro'][0],
-        ]
+        data = {'mes': meses}
+        for idx, restaurante in enumerate(restaurantes):
+            data[restaurante] = [
+                pedidos_restaurante[mes][idx] for mes in meses
+            ]
 
-        source = ColumnDataSource(data=dict(mes=meses, total=totais))
+        source = ColumnDataSource(data=data)
 
+        # Configurar o gráfico
         fig = figure(
             x_range=meses,
-            title="Pedidos por Mês",
+            title="Pedidos por Mês e Restaurante",
             x_axis_label="Mês",
             y_axis_label="Total de Pedidos",
             height=450,
+            width=900,
             tools="pan,box_zoom,reset,save"
         )
 
-        fig.vbar(x='mes', top='total', width=0.5, source=source, color="mediumseagreen")
+        # Configurar cores para cada restaurante
+        cores = ["mediumseagreen", "tomato", "dodgerblue", "gold", "purple"]
+        largura_barra = 0.8 / len(restaurantes)  # Ajustar a largura das barras
 
-        labels = LabelSet(x='mes', y='total', text='total', level='glyph', text_align='center', y_offset=5,
-                          source=source)
-        fig.add_layout(labels)
+        # Adicionar barras para cada restaurante
+        for i, restaurante in enumerate(restaurantes):
+            x_offset = -0.4 + i * largura_barra  # Posicionar as barras
+            fig.vbar(
+                x=dodge('mes', x_offset, range=fig.x_range),
+                top=restaurante,
+                width=largura_barra,
+                source=source,
+                color=cores[i % len(cores)],
+                legend_label=restaurante
+            )
+
+        # Configurar o layout
+        fig.legend.title = "Restaurantes"
+        fig.legend.location = "top_left"
+        fig.legend.orientation = "vertical"
 
         return self.render_graph(fig)
 
@@ -194,5 +205,41 @@ class Bokeh:
         fig.add_layout(labels)
 
         return self.render_graph(fig)
+
+    def admin_graph5(self, restaurantes_clientes_df):
+        data = {
+            'Categoria': ['Restaurantes', 'Clientes'],
+            'Quantidade': [
+                restaurantes_clientes_df['RestaurantesCadastrados'][0],
+                restaurantes_clientes_df['ClientesCadastrados'][0]
+            ]
+        }
+        data_source = to_column_source(data)
+
+        fig = figure(
+            x_range=data['Categoria'],
+            title="Quantidade de Restaurantes x Clientes Cadastrados",
+            x_axis_label='Categoria',
+            y_axis_label='Quantidade',
+            height=450,
+            tools="pan,box_zoom,reset,save",
+        )
+
+        fig.vbar(x='Categoria', top='Quantidade', width=0.5, source=data_source, color="dodgerblue")
+
+        labels = LabelSet(
+            x='Categoria',
+            y='Quantidade',
+            text='Quantidade',
+            level='glyph',
+            text_align='center',
+            y_offset=5,
+            source=data_source
+        )
+        fig.add_layout(labels)
+
+        return self.render_graph(fig)
+
+
 
 

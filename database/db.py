@@ -622,7 +622,7 @@ class DB:
         cur = self.connection.cursor()
 
         cur.execute('''
-                    SELECT ROUND(SUM(p.total), 0)
+                    SELECT ROUND(SUM(p.total), 2)
                     FROM pedido p
                     WHERE id_pedido = ?
                     GROUP BY p.id_pedido
@@ -731,7 +731,7 @@ class DB:
 
         cur.execute('''
                     SELECT u.nome AS Nome,
-                           SUM(v.total) AS Total
+                           ROUND(SUM(v.total), 2) AS Total
                     FROM venda v
                     LEFT JOIN usuario u ON u.id = v.id_usuario
                     where v.id_restaurante = ?
@@ -867,8 +867,10 @@ class DB:
                     FROM RestauranteClientes, QuantidadeClientes   
         ''')
 
-        record = cur.fetchone()
-        return record if record else None
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
 
     # Quantidade de clientes únicos que já fizeram um pedido em cada restaurante
     def clientes_unicos_cada_restaurante(self):
@@ -910,22 +912,23 @@ class DB:
         cur = self.connection.cursor()
 
         cur.execute('''
-                    SELECT id_restaurante,
+                    SELECT r.nome AS NomeRestaurante,
                     -- id_pedido é um timestamp Epoch Unix, por isso o uso dele para saber os dias da semana.
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '01' THEN 1 ELSE 0 END) AS Janeiro,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '02' THEN 1 ELSE 0 END) AS Fevereiro,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '03' THEN 1 ELSE 0 END) AS Março,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '04' THEN 1 ELSE 0 END) AS Abril,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '05' THEN 1 ELSE 0 END) AS Maio,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '06' THEN 1 ELSE 0 END) AS Junho,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '07' THEN 1 ELSE 0 END) AS Julho,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '08' THEN 1 ELSE 0 END) AS Agosto,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '09' THEN 1 ELSE 0 END) AS Setembro,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '10' THEN 1 ELSE 0 END) AS Outubro,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '11' THEN 1 ELSE 0 END) AS Novembro,
-                        SUM(CASE WHEN strftime('%m', datetime(id_pedido, 'unixepoch')) = '12' THEN 1 ELSE 0 END) AS Dezembro
-                    FROM pedido
-                    GROUP BY id_restaurante;
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '01' THEN 1 ELSE 0 END) AS Janeiro,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '02' THEN 1 ELSE 0 END) AS Fevereiro,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '03' THEN 1 ELSE 0 END) AS Março,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '04' THEN 1 ELSE 0 END) AS Abril,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '05' THEN 1 ELSE 0 END) AS Maio,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '06' THEN 1 ELSE 0 END) AS Junho,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '07' THEN 1 ELSE 0 END) AS Julho,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '08' THEN 1 ELSE 0 END) AS Agosto,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '09' THEN 1 ELSE 0 END) AS Setembro,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '10' THEN 1 ELSE 0 END) AS Outubro,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '11' THEN 1 ELSE 0 END) AS Novembro,
+                           SUM(CASE WHEN strftime('%m', datetime(p.id_pedido, 'unixepoch')) = '12' THEN 1 ELSE 0 END) AS Dezembro
+                    FROM pedido p
+                    JOIN restaurante r ON r.id = p.id_restaurante
+                    GROUP BY r.nome, p.id_restaurante;
         ''')
 
         cols = [column[0] for column in cur.description]

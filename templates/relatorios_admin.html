@@ -17,6 +17,7 @@
             </a>
         </div>
     {% elif is_admin %}
+    <div class="container">
         <div class="graph-container">
             {% block bokeh %}
                 {{ js_resources|indent(4)|safe }}
@@ -24,27 +25,33 @@
             {% endblock %}
 
             {% block content %}
-                <!-- Gráfico 1 -->
                 <div>
-                    <h2>Gráfico 1: Clientes Únicos</h2>
-                    {{ graph1.plot_script|safe }}
-                    {{ graph1.plot_div|safe }}
+                <!-- Gráfico 1 -->
+                    <h2>Quantidade de restaurantes e clientes cadastrados</h2>
+                    {{ graph5.plot_script|safe }}
+                    {{ graph5.plot_div|safe }}
                 </div>
                 <!-- Gráfico 2 -->
                 <div>
-                    <h2>Gráfico 2: Ticket Médio</h2>
-                    {{ graph2.plot_script|safe }}
-                    {{ graph2.plot_div|safe }}
+                    <h2>Clientes Únicos</h2>
+                    {{ graph1.plot_script|safe }}
+                    {{ graph1.plot_div|safe }}
                 </div>
                 <!-- Gráfico 3 -->
                 <div>
-                    <h2>Gráfico 3: Pedidos Restaurantes</h2>
-                    {{ graph3.plot_script|safe }}
-                    {{ graph3.plot_div|safe }}
+                    <h2>Ticket Médio por restaurante</h2>
+                    {{ graph2.plot_script|safe }}
+                    {{ graph2.plot_div|safe }}
                 </div>
                 <!-- Gráfico 4 -->
                 <div>
-                    <h2>Gráfico 4: Os clientes que mais gastaram</h2>
+                    <h2>Pedidos dos restaurantes por mês</h2>
+                    {{ graph3.plot_script|safe }}
+                    {{ graph3.plot_div|safe }}
+                </div>
+                <!-- Gráfico 5 -->
+                <div>
+                    <h2>Clientes que mais gastaram</h2>
                     {{ graph4.plot_script|safe }}
                     {{ graph4.plot_div|safe }}
                 </div>
@@ -54,6 +61,7 @@
                 <button class="index-button"> Menu </button>
             </a>
         </div>
+    </div>
     {% endif %}
 </body>
 </html>

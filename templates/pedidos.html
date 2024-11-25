@@ -7,12 +7,12 @@
 </head>
 <body>
     {% if not logged_in %}
-     <div class="login-container">
+    <div class="login-container">
         <h2 class="title">Você não está logado</h2>
-        <a href="{{ url_for('index') }}" class="link-index">
+        <a href="{{ url_for('logout') }}">
             <button class="index-button"> Menu </button>
         </a>
-     </div>
+    </div>
 
     {% elif is_admin %}
     <div class="login-container">
@@ -39,7 +39,7 @@
                     <div class="pedido-actions">
                         <p>
                             <strong>Pedido ID:</strong> {{ pedido.id_pedido }}
-                            <strong>Total:</strong> {{ pedido.total }}
+                            <strong>Total:</strong> R${{ pedido.total }}
                         </p>
                         <ul>
                             {% for product in pedido.product_info %}
@@ -78,9 +78,6 @@
             <div class="buttons">
                 <a href="{{ url_for('index') }}" class="link-index">
                     <button class="index-button"> Menu </button>
-                </a>
-                <a href="{{ url_for('logout') }}" class="link-index">
-                    <button class="index-button"> Logout </button>
                 </a>
             </div>
         </div>
