@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title> Relatorios </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/relatorios.css') }}"/>
+
 </head>
 <body>
     {% if not is_restaurant %}
@@ -17,11 +18,37 @@
             </a>
         </div>
     {% elif is_restaurant %}
-        <h1>restaurante</h1>
-        <a href="{{ url_for('index') }}" class="link-index">
-            <button class="index-button"> Menu </button>
-        </a>
+        <div class="graph-container">
+            {% block bokeh %}
+                {{ js_resources|indent(4)|safe }}
+                {{ css_resources|indent(4)|safe }}
+            {% endblock %}
 
+            {% block content %}
+                <!-- Gráfico 1 -->
+                <div>
+                    <h2>Gráfico 1: Média Gasta por Usuário</h2>
+                    {{ graph1.plot_script|safe }}
+                    {{ graph1.plot_div|safe }}
+                </div>
+                <!-- Gráfico 2 -->
+                <div>
+                    <h2>Gráfico 2: Pedidos por Status</h2>
+                    {{ graph2.plot_script|safe }}
+                    {{ graph2.plot_div|safe }}
+                </div>
+                <!-- Gráfico 3 -->
+                <div>
+                    <h2>Gráfico 3: Pedidos por dia da semana</h2>
+                    {{ graph3.plot_script|safe }}
+                    {{ graph3.plot_div|safe }}
+                </div>
+            {% endblock %}
+
+            <a href="{{ url_for('pedidos') }}" class="link-pedidos">
+                <button class="index-button"> Pedidos </button>
+            </a>
+        </div>
     {% endif %}
 </body>
 </html>

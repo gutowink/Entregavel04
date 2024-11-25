@@ -1,1 +1,3 @@
 Flask==3.0.3
+Pandas==2.2.3
+Bokeh==3.6.0

@@ -1,31 +1,28 @@
-/* Estilo geral da página */
 body {
     font-family: Arial, sans-serif;
     background-color: darkgray;
     display: flex;
     justify-content: center;
-    align-items: center; /* Alinha o conteúdo no topo */
-    height: 100vh;
-    margin: 0;
-    overflow-y: auto; /* Habilita a barra de rolagem */
+    align-items: center;
+    overflow-y: auto;
 }
 
 .appbar {
-    width: 100%; /* Reduz a largura para não colidir com a rolagem */
+    width: 100%;
     background-color: #333;
     padding: 10px 20px;
     display: flex;
-    justify-content: flex-end; /* Alinha o botão à direita */
+    justify-content: flex-end;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: fixed; /* Fixa a barra no topo da página */
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000; /* Certifica-se de que a AppBar fique acima de tudo */
-    box-sizing: border-box; /* Inclui o padding na largura */
+    z-index: 1000;
+    box-sizing: border-box;
 }
 
 .appbar-title {
-    flex-grow: 1; /* Faz o título ocupar o espaço disponível */
+    flex-grow: 1;
     text-align: center;
     color: white;
     font-size: 1.5rem;
@@ -39,7 +36,7 @@ body {
     align-items: center;
     flex-direction: column;
     margin: 2rem;
-    margin-top: 100px;
+    margin-top: 5%;
     padding: 1.5rem;
 }
 
@@ -57,8 +54,8 @@ body {
 
 .menu-container {
     display: flex;
-    justify-content: center; /* Centraliza o botão horizontalmente */
-    margin-top: 20px; /* Espaço entre os pedidos e o botão */
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .title {
@@ -66,8 +63,6 @@ body {
     margin-bottom: 1rem;
 }
 
-
-/* Contêiner da lista de pedidos */
 .pedido-lista {
     margin: 0;
     padding: 0;
@@ -77,7 +72,6 @@ body {
     gap: 20px;
 }
 
-/* Cada pedido como uma box */
 .pedido-item {
     background-color: #ffffff;
     border-radius: 10px;
@@ -131,14 +125,13 @@ ul li {
 }
 
 .reject-button {
-    background-color: #f44336; /* Cor vermelha para recusar */
+    background-color: #f44336;
 }
 
 .reject-button:hover {
     background-color: #7f1b18;
 }
 
-/* Estilo para o link de navegação */
 a {
     margin-top: 30px;
     color: #007BFF;
@@ -181,4 +174,11 @@ a:hover {
 
 .relatorios-button:hover {
     background-color: #45a049;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
 }

@@ -1,13 +1,10 @@
-/* Estilo geral da página */
 body {
     font-family: Arial, sans-serif;
     background-color: darkgray;
     display: flex;
     justify-content: center;
-    align-items: center; /* Alinha o conteúdo no topo */
-    height: 100vh;
-    margin: 0;
-    overflow-y: auto; /* Habilita a barra de rolagem */
+    align-items: center;
+    overflow-y: auto;
 }
 
 .container {
@@ -16,7 +13,15 @@ body {
     align-items: center;
     flex-direction: column;
     margin: 2rem;
-    margin-top: 100px;
+    padding: 1.5rem;
+}
+
+.graph-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 2rem;
     padding: 1.5rem;
 }
 
@@ -34,8 +39,8 @@ body {
 
 .menu-container {
     display: flex;
-    justify-content: center; /* Centraliza o botão horizontalmente */
-    margin-top: 20px; /* Espaço entre os pedidos e o botão */
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .title {
@@ -43,7 +48,6 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Estilo para o link de navegação */
 a {
     margin-top: 30px;
     color: #007BFF;

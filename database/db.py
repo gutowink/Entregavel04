@@ -1,4 +1,5 @@
 import sqlite3
+from pandas import DataFrame
 
 from models.restaurante import Restaurante
 from models.produto import Produto
@@ -719,18 +720,28 @@ class DB:
                     GROUP BY u.nome
         ''', (id_restaurante,))
 
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
+
     # Qual a maior compra (em valor) feita no restaurante?
     def maior_compra_restaurante(self, id_restaurante: int):
         cur = self.connection.cursor()
 
         cur.execute('''
-                    SELECT SUM(v.total) AS Total
+                    SELECT u.nome AS Nome,
+                           SUM(v.total) AS Total
                     FROM venda v
+                    LEFT JOIN usuario u ON u.id = v.id_usuario
                     where v.id_restaurante = ?
                     GROUP BY v.id_pedido
                     ORDER BY Total DESC
                     LIMIT 1
         ''', (id_restaurante,))
+
+        record = cur.fetchone()
+        return record if record else None
 
     # Qual o maior pedido (em quantidade de itens) feita no restaurante?
     def maior_pedido_restaurante(self, id_restaurante: int):
@@ -746,21 +757,37 @@ class DB:
                     LIMIT 1
         ''', (id_restaurante,))
 
+        record = cur.fetchone()
+        return record if record else None
+
     # Liste a maior e a menor comissão paga pelo restaurante
     def maior_e_menor_comissao_paga_restaurante(self, id_restaurante: int):
         cur = self.connection.cursor()
 
         cur.execute('''
-                    SELECT
-                        ROUND(SUM(v.total), 2) AS TotalComComissao,
-                        ROUND(SUM(v.total) - (SUM(v.total) * r.comissao / 100), 2) AS TotalSemComissao,
-                        ROUND((SUM(v.total) * r.comissao / 100), 2) AS DiferencaComissao
+                    WITH MaiorComissao AS (
+                    SELECT ROUND((SUM(v.total) * r.comissao / 100), 2) AS MaiorComissao
                     FROM venda v
-                    LEFT JOIN restaurante r ON r.id = v.id_restaurante
+                          LEFT JOIN restaurante r ON r.id = v.id_restaurante
                     WHERE v.id_restaurante = ?
                     GROUP BY v.id_pedido
-                    ORDER BY DiferencaComissao DESC -- para saber a maior e a menor comissão vou pegar o primeiro e ultimo elemento da consulta.
-        ''', (id_restaurante,))
+                    ORDER BY MaiorComissao DESC
+                    LIMIT 1
+                    ),
+                    MenorComissao AS (
+                    SELECT ROUND((SUM(v.total) * r.comissao / 100), 2) AS MenorComissao
+                    FROM venda v
+                           LEFT JOIN restaurante r ON r.id = v.id_restaurante
+                    WHERE v.id_restaurante = ?
+                    GROUP BY v.id_pedido
+                    ORDER BY MenorComissao
+                    LIMIT 1
+                    ) SELECT ma.MaiorComissao, me.MenorComissao
+                      FROM MaiorComissao ma, MenorComissao me
+        ''', (id_restaurante, id_restaurante))
+
+        record = cur.fetchone()
+        return record if record else None
 
     # Qual o item mais pedido?
     def item_mais_pedido(self, id_restaurante: int):
@@ -775,6 +802,9 @@ class DB:
                     LIMIT 1
         ''', (id_restaurante,))
 
+        record = cur.fetchone()
+        return record if record else None
+
     # Quantos pedidos em cada status? Liste todos os status, mesmo que não haja pedido
     def qnts_pedidos_p_status(self, id_restaurante: int):
         cur = self.connection.cursor()
@@ -786,10 +816,15 @@ class DB:
                         COUNT(DISTINCT CASE WHEN p.status = 'aceito' THEN p.id_pedido END) AS Aceito,
                         COUNT(DISTINCT CASE WHEN p.status = 'saiu para entrega' THEN p.id_pedido END) AS SaiuParaEntrega,
                         COUNT(DISTINCT CASE WHEN p.status = 'entregue' THEN p.id_pedido END) AS Entregue,
-                        COUNT(DISTINCT CASE WHEN p.status = 'rejeitado' THEN p.id_pedido END) AS Rejeitado
+                        COUNT(DISTINCT CASE WHEN p.status = 'recusado' THEN p.id_pedido END) AS Recusado
                     FROM pedido p
                     WHERE id_restaurante = ?
         ''', (id_restaurante,))
+
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
 
     # Calcule a quantidade média de pedidos por cada dia da semana. Pivote o resultado.
     def pedidos_dia_semana(self, id_restaurante: int):
@@ -797,16 +832,21 @@ class DB:
         cur.execute('''
                     SELECT
                     -- id_pedido é um timestamp Epoch Unix, por isso o uso dele para saber os dias da semana.
-                        AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '0' THEN 1 ELSE 0 END) AS Segunda,
-                        AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '1' THEN 1 ELSE 0 END) AS Terça,
-                        AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '2' THEN 1 ELSE 0 END) AS Quarta,
-                        AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '3' THEN 1 ELSE 0 END) AS Quinta,
-                        AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '4' THEN 1 ELSE 0 END) AS Sexta,
-                        AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '5' THEN 1 ELSE 0 END) AS Sábado
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '1' THEN 10 ELSE 0 END), 1) AS Segunda,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '2' THEN 10 ELSE 0 END), 1) AS Terça,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '3' THEN 10 ELSE 0 END), 1) AS Quarta,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '4' THEN 10 ELSE 0 END), 1) AS Quinta,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '5' THEN 10 ELSE 0 END), 1) AS Sexta,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '6' THEN 10 ELSE 0 END), 1) AS Sábado
                     FROM venda
                     WHERE id_restaurante = ?
 
         ''', (id_restaurante,))
+
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
 
     # Relatórios Admin:
 
@@ -827,6 +867,9 @@ class DB:
                     FROM RestauranteClientes, QuantidadeClientes   
         ''')
 
+        record = cur.fetchone()
+        return record if record else None
+
     # Quantidade de clientes únicos que já fizeram um pedido em cada restaurante
     def clientes_unicos_cada_restaurante(self):
         cur = self.connection.cursor()
@@ -838,6 +881,11 @@ class DB:
                     LEFT JOIN restaurante r ON pedido.id_restaurante = r.id
                     GROUP BY id_restaurante;
         ''')
+
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
 
     # Ticket médio por restaurante (valor médio de cada pedido)
     def ticket_medio(self):
@@ -851,6 +899,11 @@ class DB:
                     GROUP BY r.id
                     ORDER BY TicketMedio DESC;
         ''')
+
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
 
     # Pivote a quantidade de pedidos de cada restaurante (linhas) e meses (colunas)
     def pedidos_restaurante(self):
@@ -875,6 +928,11 @@ class DB:
                     GROUP BY id_restaurante;
         ''')
 
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results
+
     # Crie um insight para ajudar a administração do sistema
     # insight: os 5 (Valor hipotético, pode ser bem mais dependendo do sucesso do aplicativo) clientes que mais gastaram no aplicativo em geral
     # motivo: os clientes que mais gastam no aplicativo vão receber 1 cupom de desconto a cada X tempo, se manterem esta frequência de pedidos.
@@ -889,3 +947,8 @@ class DB:
                     ORDER BY Total DESC
                     LIMIT 5;
         ''')
+
+        cols = [column[0] for column in cur.description]
+        results = DataFrame.from_records(data=cur.fetchall(), columns=cols)
+        cur.close()
+        return results

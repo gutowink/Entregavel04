@@ -74,12 +74,15 @@
                 </li>
                 {% endfor %}
             </ul>
-        </div>
 
-        <div class="menu-container">
-            <a href="{{ url_for('index') }}" class="link-index">
-                <button class="index-button"> Menu </button>
-            </a>
+            <div class="buttons">
+                <a href="{{ url_for('index') }}" class="link-index">
+                    <button class="index-button"> Menu </button>
+                </a>
+                <a href="{{ url_for('logout') }}" class="link-index">
+                    <button class="index-button"> Logout </button>
+                </a>
+            </div>
         </div>
     {% endif %}
 

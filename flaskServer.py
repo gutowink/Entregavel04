@@ -4,12 +4,14 @@ from flask import request
 from flask import session
 from database.db import DB
 from utils.singleton import Singleton
+from utils.bokehgraph import *
 
 # todo comentar código (Não só neste arquivo)
-# todo tela de relatórios para restaurante e admin
+# todo terminar tela de relatórios para restaurante e admin (quase pronto)
 # todo modelagem conceitual e lógica do banco
 
 my_db = DB('GulaExpress.db')
+bk = Bokeh()
 
 flask_app = Flask(__name__)
 flask_app.secret_key = b'c6#P3hZ"J7Kw\n\xda]/'
@@ -97,7 +99,34 @@ def logout():
 def relatorios_admin():
     admin = Singleton().get_current_admin()
     if admin is not None:
-        return render_template('relatorios_admin.html', is_admin=True)
+
+        js_resources = INLINE.render_js()
+        css_resources = INLINE.render_css()
+
+        qntd_restaurante_cliente = my_db.qntd_restaurante_cliente() # não precisa de gráfico
+
+        clientes_unicos = my_db.clientes_unicos_cada_restaurante()
+        graph1 = bk.admin_graph1(clientes_unicos)
+
+        ticket_medio = my_db.ticket_medio()
+        graph2 = bk.admin_graph2(ticket_medio)
+
+        pedidos_restaurantes = my_db.pedidos_restaurante()
+        graph3 = bk.admin_graph3(pedidos_restaurantes)
+
+        insight = my_db.insight()
+        graph4 = bk.admin_graph4(insight)
+
+        data = {
+            'qntd_restaurante_cliente': qntd_restaurante_cliente,
+            'graph1': graph1,
+            'graph2': graph2,
+            'graph3': graph3,
+            'graph4': graph4
+        }
+
+        return render_template('relatorios_admin.html', is_admin=True,
+                               js_resources=js_resources, css_resources=css_resources, **data)
     else:
         return render_template('relatorios_admin.html', is_admin=False)
 
@@ -105,17 +134,38 @@ def relatorios_admin():
 def relatorios_restaurante():
     restaurante = Singleton().get_current_restaurant_flask()
     if restaurante is not None:
-        return render_template('relatorios_restaurante.html', is_restaurant=True)
+
+        js_resources = INLINE.render_js()
+        css_resources = INLINE.render_css()
+
+        media_gasta = my_db.media_gasta(restaurante.pk)
+        graph1 = bk.restaurant_graph1(media_gasta)
+
+        maior_compra = my_db.maior_compra_restaurante(restaurante.pk) # não precisa de gráfico
+
+        maior_pedido = my_db.maior_pedido_restaurante(restaurante.pk) # não precisa de gráfico
+
+        maior_e_menor_comissao = my_db.maior_e_menor_comissao_paga_restaurante(restaurante.pk) # não de precisa gráfico
+
+        item_mais_pedido = my_db.item_mais_pedido(restaurante.pk) # não precisa de gráfico
+
+        pedidos_p_status = my_db.qnts_pedidos_p_status(restaurante.pk)
+        graph2 = bk.restaurant_graph2(pedidos_p_status)
+
+        pedidos_dia_semana = my_db.pedidos_dia_semana(restaurante.pk)
+        graph3 = bk.restaurant_graph3(pedidos_dia_semana)
+
+        data = {
+            'graph1': graph1,
+            'maior_compra': maior_compra,
+            'maior_pedido': maior_pedido,
+            'maior_e_menor_comissao': maior_e_menor_comissao,
+            'item_mais_pedido': item_mais_pedido,
+            'graph2': graph2,
+            'graph3': graph3
+        }
+
+        return render_template('relatorios_restaurante.html', is_restaurant=True,
+                               js_resources=js_resources, css_resources=css_resources, **data)
     else:
         return render_template('relatorios_restaurante.html', is_restaurant=False)
-
-#  @flask_app.route('/relatorios/restaurante')
-#  def relatorios_restaurante():
-#      restaurante = Singleton().get_current_restaurant_flask()
-#      admin = Singleton().get_current_admin()
-#      if restaurante is not None:
-#          return render_template('relatorios_restaurante.html', is_restaurant=True, is_admin=False)
-#      elif admin is not None:
-#          return render_template('relatorios_restaurante.html', is_restaurant=False, is_admin=True)
-#      else:
-#          return render_template('relatorios_restaurante.html', is_restaurant=False, is_admin=False)
