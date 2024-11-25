@@ -1,87 +1,87 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <title>Pedidos</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/pedidos.css') }}"/>
-    </head>
-    <body>
-        {% if not logged_in %}
-         <div class="login-container">
-            <h2 class="title">Você não está logado</h2>
-            <a href="{{ url_for('index') }}" class="link-index">
-                <button class="index-button"> Menu </button>
-            </a>
-         </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pedidos.css') }}"/>
+</head>
+<body>
+    {% if not logged_in %}
+     <div class="login-container">
+        <h2 class="title">Você não está logado</h2>
+        <a href="{{ url_for('index') }}" class="link-index">
+            <button class="index-button"> Menu </button>
+        </a>
+     </div>
 
-        {% elif is_admin %}
-        <div class="login-container">
-            <h2 class="title">Você não é um restaurante.</h2>
+    {% elif is_admin %}
+    <div class="login-container">
+        <h2 class="title">Você não é um restaurante.</h2>
+        <a href="{{ url_for('index') }}" class="link-index">
+            <button class="index-button"> Menu </button>
+        </a>
+    </div>
+
+    {% else %}
+        <div class="appbar">
+            <div class="appbar-title">
+                <p>Menu do Restaurante</p>
+            </div>
+            <a href="{{ url_for('relatorios_restaurante') }}" class="link-relatorios_restaurante">
+                <button class="relatorios-button">Relatórios</button>
+            </a>
+        </div>
+
+        <div class="container">
+            <ul class="pedido-lista">
+                {% for pedido in pedidos %}
+                <li class="pedido-item">
+                    <div class="pedido-actions">
+                        <p>
+                            <strong>Pedido ID:</strong> {{ pedido.id_pedido }}
+                            <strong>Total:</strong> {{ pedido.total }}
+                        </p>
+                        <ul>
+                            {% for product in pedido.product_info %}
+                            <li>
+                                Nome: {{ product.nome }} - Quantidade: {{ product.quantidade }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% if pedido.status == 'criado' %}
+                    <div>
+                        <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='aceito') }}" method="post">
+                            <button type="submit" class="accept-button">Aceitar</button>
+                        </form>
+                        <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='recusado') }}" method="post">
+                            <button type="submit" class="reject-button">Recusar</button>
+                        </form>
+                    </div>
+                    {% elif pedido.status == 'aceito' %}
+                    <div>
+                        <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='saiu_para_entrega') }}" method="post">
+                            <button type="submit" class="accept-button">Saiu para entrega</button>
+                        </form>
+                    </div>
+                    {% elif pedido.status == 'saiu para entrega' %}
+                    <div>
+                        <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='entregue') }}" method="post">
+                            <button type="submit" class="accept-button">Entregue</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="menu-container">
             <a href="{{ url_for('index') }}" class="link-index">
                 <button class="index-button"> Menu </button>
             </a>
         </div>
+    {% endif %}
 
-        {% else %}
-            <div class="appbar">
-                <div class="appbar-title">
-                    <p>Menu do Restaurante</p>
-                </div>
-                <a href="{{ url_for('relatorios_restaurante') }}" class="link-relatorios_restaurante">
-                    <button class="relatorios-button">Relatórios</button>
-                </a>
-            </div>
-
-            <div class="container">
-                <ul class="pedido-lista">
-                    {% for pedido in pedidos %}
-                    <li class="pedido-item">
-                        <div class="pedido-actions">
-                            <p>
-                                <strong>Pedido ID:</strong> {{ pedido.id_pedido }}
-                                <strong>Total:</strong> {{ pedido.total }}
-                            </p>
-                            <ul>
-                                {% for product in pedido.product_info %}
-                                <li>
-                                    Nome: {{ product.nome }} - Quantidade: {{ product.quantidade }}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% if pedido.status == 'criado' %}
-                        <div>
-                            <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='aceito') }}" method="post">
-                                <button type="submit" class="accept-button">Aceitar</button>
-                            </form>
-                            <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='recusado') }}" method="post">
-                                <button type="submit" class="reject-button">Recusar</button>
-                            </form>
-                        </div>
-                        {% elif pedido.status == 'aceito' %}
-                        <div>
-                            <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='saiu_para_entrega') }}" method="post">
-                                <button type="submit" class="accept-button">Saiu para entrega</button>
-                            </form>
-                        </div>
-                        {% elif pedido.status == 'saiu para entrega' %}
-                        <div>
-                            <form action="{{ url_for('alterar_status', pedido_id=pedido.id_pedido, novo_status='entregue') }}" method="post">
-                                <button type="submit" class="accept-button">Entregue</button>
-                            </form>
-                        </div>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <div class="menu-container">
-                <a href="{{ url_for('index') }}" class="link-index">
-                    <button class="index-button"> Menu </button>
-                </a>
-            </div>
-        {% endif %}
-
-    </body>
+</body>
 </html>

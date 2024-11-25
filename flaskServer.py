@@ -119,5 +119,3 @@ def relatorios_restaurante():
 #          return render_template('relatorios_restaurante.html', is_restaurant=False, is_admin=True)
 #      else:
 #          return render_template('relatorios_restaurante.html', is_restaurant=False, is_admin=False)
-
-# todo tela de relatórios para restaurante e admin

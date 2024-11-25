@@ -1,0 +1,72 @@
+/* Estilo geral da página */
+body {
+    font-family: Arial, sans-serif;
+    background-color: darkgray;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Alinha o conteúdo no topo */
+    height: 100vh;
+    margin: 0;
+    overflow-y: auto; /* Habilita a barra de rolagem */
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 2rem;
+    margin-top: 100px;
+    padding: 1.5rem;
+}
+
+.login-container {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+.menu-container {
+    display: flex;
+    justify-content: center; /* Centraliza o botão horizontalmente */
+    margin-top: 20px; /* Espaço entre os pedidos e o botão */
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Estilo para o link de navegação */
+a {
+    margin-top: 30px;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.index-button {
+    width: 7rem;
+    height: 3rem;
+    padding: 0.8rem;
+    margin: 0.5rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.index-button:hover {
+    background-color: #45a049;
+}
