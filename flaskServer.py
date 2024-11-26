@@ -6,10 +6,6 @@ from database.db import DB
 from utils.singleton import Singleton
 from utils.bokehgraph import *
 
-# todo comentar código (Não só neste arquivo)
-# todo terminar tela de relatórios para restaurante e admin (quase pronto)
-# todo modelagem conceitual e lógica do banco
-
 my_db = DB('GulaExpress.db')
 bk = Bokeh()
 
@@ -30,17 +26,17 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        restaurante = my_db.login(email, password)
-        admin = my_db.is_admin(email, password)
+        restaurante = my_db.login(email, password)  # verifica se é um restarante
+        admin = my_db.is_admin(email, password)  # verifica se é um admin
         if restaurante is not None:
-            Singleton().set_current_restaurant_flask(restaurante)
+            Singleton().set_current_restaurant_flask(restaurante)  # armazena o restaurente no singleton
             session['email'] = request.form['email']
             return render_template('index.html',
                                    houve_falha=falha_login, is_admin=False)
         elif admin is not None:
             Singleton().set_current_admin(admin)
             products = my_db.get_all_pedidos()
-            Singleton().set_all_products(products)
+            Singleton().set_all_products(products)  # armazena todos os prdotuso no singleton
             session['email'] = request.form['email']
             return render_template('index.html',
                                    houve_falha=falha_login, is_admin=True)
@@ -54,10 +50,10 @@ def pedidos():
     admin = Singleton().get_current_admin()
     if restaurante:
         p_pedidos = my_db.get_pedido_id(restaurante.pk)
-        pedidos_info = []  # Lista para armazenar informações agrupadas de pedidos
+        pedidos_info = []  # Lista para armazenar informações de pedidos
 
         for pedido_id in p_pedidos:
-            pedido_id = pedido_id[0]  # Extrai o ID do pedido
+            pedido_id = pedido_id[0]  # ID do pedido
             total = my_db.get_pedido_total(pedido_id)  # pega o total do pedido
             status = my_db.get_pedido_status_by_pedido(pedido_id)
             products = my_db.get_product_name(pedido_id)  # Obtém os produtos do pedido atual
@@ -78,6 +74,7 @@ def pedidos():
 
 @flask_app.route('/alterar_status/<int:pedido_id>/<novo_status>', methods=['POST'])
 def alterar_status(pedido_id, novo_status):
+    # altera o status do pedido no banco de dados
     if novo_status == 'aceito':
         my_db.update_status_pedido_aceito(pedido_id)
     elif novo_status == 'saiu_para_entrega':
@@ -90,6 +87,7 @@ def alterar_status(pedido_id, novo_status):
 
 @flask_app.route('/logout')
 def logout():
+    # limpa as informaçõs do usuário quando faz o logout e redireciona para a tela de login
     session.pop('email', None)
     Singleton().set_current_restaurant_flask(None)
     Singleton().set_current_admin(None)
@@ -103,6 +101,7 @@ def relatorios_admin():
         js_resources = INLINE.render_js()
         css_resources = INLINE.render_css()
 
+        # consultas para os relatórios
         qntd_restaurante_cliente = my_db.qntd_restaurante_cliente()
         graph5 = bk.admin_graph5(qntd_restaurante_cliente)
 
@@ -118,7 +117,7 @@ def relatorios_admin():
         insight = my_db.insight()
         graph4 = bk.admin_graph4(insight)
 
-        data = {
+        data = {  # salva as informaçõs num dicionário para melhor organização
             'qntd_restaurante_cliente': qntd_restaurante_cliente,
             'graph1': graph1,
             'graph2': graph2,
@@ -140,6 +139,7 @@ def relatorios_restaurante():
         js_resources = INLINE.render_js()
         css_resources = INLINE.render_css()
 
+        # consultas para os relatórios
         media_gasta = my_db.media_gasta(restaurante.pk)
         graph1 = bk.restaurant_graph1(media_gasta)
 
@@ -157,7 +157,7 @@ def relatorios_restaurante():
         pedidos_dia_semana = my_db.pedidos_dia_semana(restaurante.pk)
         graph3 = bk.restaurant_graph3(pedidos_dia_semana)
 
-        data = {
+        data = { # salva as informaçõs num dicionário para melhor organização
             'graph1': graph1,
             'maior_compra': maior_compra,
             'maior_pedido': maior_pedido,

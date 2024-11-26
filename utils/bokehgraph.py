@@ -138,7 +138,7 @@ class Bokeh:
 
         return self.render_graph(fig)
 
-    def admin_graph3(self, pedidos_restaurante):
+    def admin_graph3(self, pedidos_restaurante): # Uso de ChatGPT para gerar este gráfico, devido a maior complexidade.
         # Preparar os dados
         restaurantes = pedidos_restaurante['NomeRestaurante']
         meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',

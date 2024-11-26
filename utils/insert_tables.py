@@ -89,7 +89,27 @@ class Inserts:
 
             ('Usuario D', 5, 6, 3, 30.10, 90.30, 5, 'criado'),
             ('Usuario D', 5, 11, 1, 29.99, 29.99, 5, 'criado'),
-            ('Usuario D', 5, 20, 2, 25.25, 50.50, 5, 'criado')
+            ('Usuario D', 5, 20, 2, 25.25, 50.50, 5, 'criado'),
+
+            ('Usuario B', 1, 1, 2, 25.50, 51.00, 6, 'criado'),
+            ('Usuario B', 1, 2, 1, 15.75, 15.75, 6, 'criado'),
+            ('Usuario B', 1, 12, 3, 19.80, 59.40, 6, 'criado'),
+
+            ('Usuario E', 2, 3, 1, 35.10, 35.10, 7, 'recusado'),
+            ('Usuario E', 2, 8, 2, 22.00, 44.00, 7, 'recusado'),
+            ('Usuario E', 2, 13, 4, 27.50, 110.00, 7, 'recusado'),
+
+            ('Usuario C', 3, 4, 2, 45.20, 90.40, 8, 'aceito'),
+            ('Usuario C', 3, 9, 1, 40.75, 40.75, 8, 'aceito'),
+            ('Usuario C', 3, 19, 3, 47.60, 142.80, 8, 'aceito'),
+
+            ('Usuario D', 4, 5, 1, 55.30, 55.30, 9, 'saiu para entrega'),
+            ('Usuario D', 4, 10, 2, 33.90, 67.80, 9, 'saiu para entrega'),
+            ('Usuario D', 4, 15, 4, 44.00, 176.00, 9, 'saiu para entrega'),
+
+            ('Usuario A', 5, 6, 3, 30.10, 90.30, 10, 'entregue'),
+            ('Usuario A', 5, 11, 1, 29.99, 29.99, 10, 'entregue'),
+            ('Usuario A', 5, 20, 2, 25.25, 50.50, 10, 'entregue')
         ]
         cur.executemany('''
         INSERT INTO pedido (usuario, id_restaurante, id_produto, quantidade, preco, total, id_pedido, status)

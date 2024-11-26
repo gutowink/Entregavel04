@@ -96,7 +96,10 @@ class DB:
                         valor INTEGER NOT NULL,
                         total FLOAT NOT NULL,
                         data_hora DATETIME,
-                        id_pedido INTEGER NOT NULL
+                        id_pedido INTEGER NOT NULL,
+                        FOREIGN KEY (id_usuario) REFERENCES usuario(id),
+                        FOREIGN KEY (id_restaurante) REFERENCES restaurante(id),
+                        FOREIGN KEY (id_carrinho) REFERENCES carrinho(id)
                     )
                     ''')
 
