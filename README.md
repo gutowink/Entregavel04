@@ -7,6 +7,12 @@ flask --app flaskServer run
  - **email**: admin@admin.com
  - **senha**: adminpwd123
 
-# Banco de dados já está incluso!
- - GulaExpress.db
- - Também tem o arquivo de inserts, porém com menos dados inseridos. 
+# Login usuários
+ - **email**: a@user.com 
+ - **senha**: senha123
+ - Todos os emails são (a, b, c, d, e)@user.com - senha é a mesma para todos.
+
+# Login restaurante
+ - **email**: a@rest.com
+ - **senha**: senha123
+ - Todos os emails são (a, b, c, d, e)@rest.com - senha é a mesma para todos.
