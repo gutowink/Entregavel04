@@ -138,8 +138,7 @@ class Bokeh:
 
         return self.render_graph(fig)
 
-    def admin_graph3(self, pedidos_restaurante): # Uso de ChatGPT para gerar este gráfico, devido a maior complexidade.
-        # Preparar os dados
+    def admin_graph3(self, pedidos_restaurante):
         restaurantes = pedidos_restaurante['NomeRestaurante']
         meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
                  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
@@ -152,7 +151,6 @@ class Bokeh:
 
         source = ColumnDataSource(data=data)
 
-        # Configurar o gráfico
         fig = figure(
             x_range=meses,
             title="Pedidos por Mês e Restaurante",
@@ -163,13 +161,11 @@ class Bokeh:
             tools="pan,box_zoom,reset,save"
         )
 
-        # Configurar cores para cada restaurante
         cores = ["mediumseagreen", "tomato", "dodgerblue", "gold", "purple"]
-        largura_barra = 0.8 / len(restaurantes)  # Ajustar a largura das barras
+        largura_barra = 0.8 / len(restaurantes)
 
-        # Adicionar barras para cada restaurante
         for i, restaurante in enumerate(restaurantes):
-            x_offset = -0.4 + i * largura_barra  # Posicionar as barras
+            x_offset = -0.4 + i * largura_barra
             fig.vbar(
                 x=dodge('mes', x_offset, range=fig.x_range),
                 top=restaurante,
@@ -179,7 +175,6 @@ class Bokeh:
                 legend_label=restaurante
             )
 
-        # Configurar o layout
         fig.legend.title = "Restaurantes"
         fig.legend.location = "top_left"
         fig.legend.orientation = "vertical"

@@ -96,7 +96,7 @@ class DB:
                         valor INTEGER NOT NULL,
                         total FLOAT NOT NULL,
                         data_hora DATETIME,
-                        id_pedido INTEGER NOT NULL,
+                        id_venda INTEGER NOT NULL,
                         FOREIGN KEY (id_usuario) REFERENCES usuario(id),
                         FOREIGN KEY (id_restaurante) REFERENCES restaurante(id),
                         FOREIGN KEY (id_carrinho) REFERENCES carrinho(id)
@@ -120,7 +120,7 @@ class DB:
         cur.execute('''
                         SELECT id, nome, email, senha, login 
                         FROM usuario 
-                        WHERE email = ? and senha = ?
+                        WHERE email = ? and senha = ? and id = 1
                         ''', (email, senha))
         record = cur.fetchone()
         if record is None:
@@ -168,14 +168,14 @@ class DB:
         local_timezone = timezone(timedelta(hours=-3))  # ajusta ao fuso horário
         local_time = datetime.now(local_timezone)
         data_hora_formatada = local_time.strftime('%Y-%m-%d %H:%M:%S')
-        id_pedido = int(datetime.now().timestamp())
+        id_venda = int(datetime.now().timestamp())
 
         cur = self.connection.cursor()
         cur.execute('''
-            INSERT INTO venda (id_carrinho, id_restaurante, id_usuario, nome, quantidade, valor, total, data_hora, id_pedido)
+            INSERT INTO venda (id_carrinho, id_restaurante, id_usuario, nome, quantidade, valor, total, data_hora, id_venda)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (venda.id_carrinho, venda.id_restaurante, venda.id_usuario, venda.nome, venda.quantidade,
-                          venda.valor, venda.total, data_hora_formatada, id_pedido))
+                          venda.valor, venda.total, data_hora_formatada, id_venda))
 
         self.connection.commit()
 
@@ -738,7 +738,7 @@ class DB:
                     FROM venda v
                     LEFT JOIN usuario u ON u.id = v.id_usuario
                     where v.id_restaurante = ?
-                    GROUP BY v.id_pedido
+                    GROUP BY v.id_venda
                     ORDER BY Total DESC
                     LIMIT 1
         ''', (id_restaurante,))
@@ -751,11 +751,11 @@ class DB:
         cur = self.connection.cursor()
 
         cur.execute('''
-                    SELECT v.id_pedido,
+                    SELECT v.id_venda,
                            SUM(v.quantidade) AS QuantidadeTotal
                     FROM venda v
                     WHERE v.id_restaurante = ? 
-                    GROUP BY v.id_pedido
+                    GROUP BY v.id_venda
                     ORDER BY QuantidadeTotal DESC
                     LIMIT 1
         ''', (id_restaurante,))
@@ -773,7 +773,7 @@ class DB:
                     FROM venda v
                           LEFT JOIN restaurante r ON r.id = v.id_restaurante
                     WHERE v.id_restaurante = ?
-                    GROUP BY v.id_pedido
+                    GROUP BY v.id_venda
                     ORDER BY MaiorComissao DESC
                     LIMIT 1
                     ),
@@ -782,7 +782,7 @@ class DB:
                     FROM venda v
                            LEFT JOIN restaurante r ON r.id = v.id_restaurante
                     WHERE v.id_restaurante = ?
-                    GROUP BY v.id_pedido
+                    GROUP BY v.id_venda
                     ORDER BY MenorComissao
                     LIMIT 1
                     ) SELECT ma.MaiorComissao, me.MenorComissao
@@ -834,13 +834,13 @@ class DB:
         cur = self.connection.cursor()
         cur.execute('''
                     SELECT
-                    -- id_pedido é um timestamp Epoch Unix, por isso o uso dele para saber os dias da semana.
-                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '1' THEN 10 ELSE 0 END), 1) AS Segunda,
-                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '2' THEN 10 ELSE 0 END), 1) AS Terça,
-                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '3' THEN 10 ELSE 0 END), 1) AS Quarta,
-                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '4' THEN 10 ELSE 0 END), 1) AS Quinta,
-                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '5' THEN 10 ELSE 0 END), 1) AS Sexta,
-                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_pedido, 'unixepoch')) = '6' THEN 10 ELSE 0 END), 1) AS Sábado
+                    -- id_venda é um timestamp Epoch Unix, por isso o uso dele para saber os dias da semana.
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_venda, 'unixepoch')) = '1' THEN 10 ELSE 0 END), 1) AS Segunda,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_venda, 'unixepoch')) = '2' THEN 10 ELSE 0 END), 1) AS Terça,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_venda, 'unixepoch')) = '3' THEN 10 ELSE 0 END), 1) AS Quarta,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_venda, 'unixepoch')) = '4' THEN 10 ELSE 0 END), 1) AS Quinta,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_venda, 'unixepoch')) = '5' THEN 10 ELSE 0 END), 1) AS Sexta,
+                        ROUND(AVG(CASE WHEN strftime('%w', datetime(id_venda, 'unixepoch')) = '6' THEN 10 ELSE 0 END), 1) AS Sábado
                     FROM venda
                     WHERE id_restaurante = ?
 
